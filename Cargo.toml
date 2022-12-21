@@ -1,5 +1,6 @@
 [package]
 name = "payu-india"
+description = "PayU India API Rust SDK."
 readme = "README.md"
 version = "0.1.0"
 edition = "2021"
