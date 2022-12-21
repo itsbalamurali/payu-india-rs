@@ -71,21 +71,15 @@ impl Bin {
         Self { client }
     }
 
-    pub async fn get_bin_info(self, bin: i64) -> Result<BinInfo, Error> {
-        let bin_number = bin.to_string();
-        let mut vars: HashMap<&str, &str> = HashMap::from([
+    pub async fn get_bin_info(self, bin: &'static str) -> Result<BinInfo, Error> {
+        let mut input_vars: HashMap<&str, &str> = HashMap::from([
             ("command", "getBINInfo"),
             ("var1", "1"),
-            ("var2", &bin_number),
+            ("var2", &bin),
             ("var3", "0"),
             ("var5", "1"),
         ]);
-        vars = crate::hasher::generate_hash(
-            self.client.merchant_key.as_str(),
-            self.client.merchant_salt_v2.as_str(),
-            vars,
-        )
-        .unwrap();
+        let vars = self.client.generate_hash(input_vars).unwrap();
         let client = reqwest::Client::new();
         let req = client
             .post(
@@ -103,16 +97,11 @@ impl Bin {
         };
     }
 
-    pub async fn check_is_domestic(self, bin: i64) -> Result<BinDetails, Error> {
-        let bin_number = bin.to_string();
-        let mut vars: HashMap<&str, &str> =
-            HashMap::from([("command", "check_isDomestic"), ("var1", &bin_number)]);
-        vars = crate::hasher::generate_hash(
-            self.client.merchant_key.as_str(),
-            self.client.merchant_salt_v2.as_str(),
-            vars,
-        )
-        .unwrap();
+    pub async fn check_is_domestic(self, bin: &'static str) -> Result<BinDetails, Error> {
+        let mut input_vars: HashMap<&str, &str> =
+            HashMap::from([("command", "check_isDomestic"), ("var1", bin)]);
+        let vars = self.client.generate_hash(input_vars).unwrap();
+
         let client = reqwest::Client::new();
         let req = client
             .post(

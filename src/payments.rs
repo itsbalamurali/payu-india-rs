@@ -40,9 +40,9 @@ impl Payments {
 
     pub fn get_payment_redirect_url(
         self,
-        req: &NewPaymentRequest,
+        _req: &NewPaymentRequest,
     ) -> Result<PaymentRedirectIntent, anyhow::Error> {
-        let vars: HashMap<&str, &str> = HashMap::from([("key", self.client.merchant_key.as_str())]);
+        let vars: HashMap<&str, &str> = HashMap::from([("key", self.client.merchant_key)]);
         let params: Vec<String> = vars.iter().map(|v| format!("{}={}", *v.0, *v.1)).collect();
         return Ok(PaymentRedirectIntent {
             post_url: format!("{}/_payment", self.client.base_url),

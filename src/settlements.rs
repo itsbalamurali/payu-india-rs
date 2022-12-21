@@ -71,24 +71,19 @@ impl Settlements {
 
     pub async fn get_settlement_details(
         self,
-        date: String,
+        date: &'static str,
         utr: Option<String>,
     ) -> Result<SettlementDetails, anyhow::Error> {
-        let mut vars: HashMap<&str, &str> = HashMap::from([
+        let mut input_vars: HashMap<&str, &str> = HashMap::from([
             ("command", "get_settlement_details"),
-            ("var1", &date),
+            ("var1", date),
             ("var2", "5"),
             ("var3", "10000"),
             ("var4", "L"),
             ("var5", "2"),
         ]);
         if utr.is_some() {}
-        vars = crate::hasher::generate_hash(
-            self.client.merchant_key.as_str(),
-            self.client.merchant_salt_v2.as_str(),
-            vars,
-        )
-        .unwrap();
+        let vars = self.client.generate_hash(input_vars).unwrap();
         let client = reqwest::Client::new();
         let req = client
             .post(

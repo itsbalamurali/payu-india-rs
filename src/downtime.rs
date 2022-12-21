@@ -46,14 +46,9 @@ impl Downtime {
 
     //Get the netbanking status.
     pub async fn get_netbanking_status(self) -> Result<NetBankingStatus, Error> {
-        let mut vars: HashMap<&str, &str> =
+        let input_vars: HashMap<&str, &str> =
             HashMap::from([("command", "getNetbankingStatus"), ("var1", "default")]);
-        vars = crate::hasher::generate_hash(
-            self.client.merchant_key.as_str(),
-            self.client.merchant_salt_v2.as_str(),
-            vars,
-        )
-        .unwrap();
+        let vars = self.client.generate_hash(input_vars).unwrap();
         let client = reqwest::Client::new();
         let req = client
             .post(
@@ -71,16 +66,13 @@ impl Downtime {
         };
     }
     //Get card issuing bank status.
-    pub async fn get_issuing_bank_status(self, bin: i64) -> Result<IssuingBankStatus, Error> {
-        let bin_str = &bin.to_string();
-        let mut vars: HashMap<&str, &str> =
-            HashMap::from([("command", "getIssuingBankStatus"), ("var1", bin_str)]);
-        vars = crate::hasher::generate_hash(
-            self.client.merchant_key.as_str(),
-            self.client.merchant_salt_v2.as_str(),
-            vars,
-        )
-        .unwrap();
+    pub async fn get_issuing_bank_status(
+        self,
+        bin: &'static str,
+    ) -> Result<IssuingBankStatus, Error> {
+        let mut input_vars: HashMap<&str, &str> =
+            HashMap::from([("command", "getIssuingBankStatus"), ("var1", bin)]);
+        let vars = self.client.generate_hash(input_vars).unwrap();
         let client = reqwest::Client::new();
         let req = client
             .post(
@@ -100,14 +92,9 @@ impl Downtime {
 
     //Get issuing bank card bins which are down.
     pub async fn get_issuing_bank_down_bins(self) -> Result<DownBins, Error> {
-        let mut vars: HashMap<&str, &str> =
+        let mut input_vars: HashMap<&str, &str> =
             HashMap::from([("command", "getIssuingBankDownBins"), ("var1", "default")]);
-        vars = crate::hasher::generate_hash(
-            self.client.merchant_key.as_str(),
-            self.client.merchant_salt_v2.as_str(),
-            vars,
-        )
-        .unwrap();
+        let vars = self.client.generate_hash(input_vars).unwrap();
         let client = reqwest::Client::new();
         let req = client
             .post(

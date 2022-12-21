@@ -52,18 +52,13 @@ impl Upi {
         return supported_upi_handles;
     }
 
-    pub async fn validate_vpa(self, vpa: String) -> Result<UpiVpaDetails, Error> {
-        let mut vars: HashMap<&str, &str> = HashMap::from([
+    pub async fn validate_vpa(self, vpa: &'static str) -> Result<UpiVpaDetails, Error> {
+        let mut input_vars: HashMap<&str, &str> = HashMap::from([
             ("command", "validateVPA"),
-            ("var1", &vpa),
+            ("var1", vpa),
             ("var2", "{\"validateAutoPayVPA\":\"1\"}"),
         ]);
-        vars = crate::hasher::generate_hash(
-            self.client.merchant_key.as_str(),
-            self.client.merchant_salt_v2.as_str(),
-            vars,
-        )
-        .unwrap();
+        let vars = self.client.generate_hash(input_vars).unwrap();
         let client = reqwest::Client::new();
         let req = client
             .post(
