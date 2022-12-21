@@ -1,13 +1,11 @@
 use crate::PayuApiClient;
 
 pub struct Emi {
-    client: &'static PayuApiClient
+    client: PayuApiClient,
 }
 
 impl Emi {
-    pub fn new(payu_api_client: &PayuApiClient) -> Self {
-        Self {
-            client: payu_api_client
-        }
+    pub fn new(client: PayuApiClient) -> Self {
+        Self { client }
     }
 }

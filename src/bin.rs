@@ -1,25 +1,25 @@
-use std::collections::HashMap;
-use anyhow::{anyhow, Error};
-use reqwest::{Method, Response};
-use serde::{Serialize,Deserialize};
 use crate::PayuApiClient;
+use anyhow::{anyhow, Error};
+use reqwest::Url;
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 #[derive(Serialize, Deserialize)]
 pub struct BinInfo {
     status: i32, //0 = Failed,1 = Success
-    data: BinInfoData
+    data: Data,
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct BinData {
+struct Data {
     total_count: i32,
     last: i32,
     next_start: i32,
-    bins_data: BinsData
+    bins_data: BinsData,
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct BinsData {
+struct BinsData {
     // The issuing bank of the card used for the transaction
     issuing_bank: String,
     // The BIN number of the card is displayed in the response.
@@ -47,38 +47,86 @@ pub struct BinsData {
     // Response value can contain any of the following:
     // 0 signifies that the card does not have OTP on the fly facility.
     // 1 signifies that the card have OTP on the fly facility.
-    is_otp_on_the_fly: i32
+    is_otp_on_the_fly: i32,
+}
+
+#[derive(Serialize, Deserialize)]
+struct BinDetails {
+    #[serde(rename = "isDomestic")]
+    pub is_domestic: String,
+    #[serde(rename = "issuingBank")]
+    pub issuing_bank: String,
+    #[serde(rename = "cardType")]
+    pub card_type: String,
+    #[serde(rename = "cardCategory")]
+    pub card_category: String,
 }
 
 pub struct Bin {
-    client: &'static PayuApiClient
+    client: PayuApiClient,
 }
 
 impl Bin {
-    pub fn new(payu_api_client: &PayuApiClient) -> Self {
-        Self {
-            client: payu_api_client
-        }
+    pub fn new(client: PayuApiClient) -> Self {
+        Self { client }
     }
 
-    pub async fn get_bin_info(self,bin_number: i64) -> Result<BinInfo, Error> {
-        let vars: HashMap<&str, &str> = HashMap::from(
-            [
-                ("key", self.client.merchant_key.as_str()),
-                ("command", "getBINInfo"),
-                ("var1", "1"),
-                ("var2", bin_number.to_string().as_str()),
-                ("var3", "0"),
-                ("var5", "1"),
-            ]);
+    pub async fn get_bin_info(self, bin: i64) -> Result<BinInfo, Error> {
+        let bin_number = bin.to_string();
+        let mut vars: HashMap<&str, &str> = HashMap::from([
+            ("command", "getBINInfo"),
+            ("var1", "1"),
+            ("var2", &bin_number),
+            ("var3", "0"),
+            ("var5", "1"),
+        ]);
+        vars = crate::hasher::generate_hash(
+            self.client.merchant_key.as_str(),
+            self.client.merchant_salt_v2.as_str(),
+            vars,
+        )
+        .unwrap();
         let client = reqwest::Client::new();
         let req = client
-            .post(format!("{}/merchant/postservice?form=2",self.client.base_url).parse()?)
+            .post(
+                Url::parse(
+                    format!("{}/merchant/postservice?form=2", self.client.base_url).as_str(),
+                )
+                .unwrap(),
+            )
             .form(&vars)
-            .send().await;
+            .send()
+            .await;
         return match req {
-            Ok(r) => Ok(r.json::<BinInfo>().await?),
-            Err(e) => Err(anyhow!(e))
-        }
+            Ok(r) => Ok(r.json::<BinInfo>().await.unwrap()),
+            Err(e) => Err(anyhow!(e)),
+        };
+    }
+
+    pub async fn check_is_domestic(self, bin: i64) -> Result<BinDetails, Error> {
+        let bin_number = bin.to_string();
+        let mut vars: HashMap<&str, &str> =
+            HashMap::from([("command", "check_isDomestic"), ("var1", &bin_number)]);
+        vars = crate::hasher::generate_hash(
+            self.client.merchant_key.as_str(),
+            self.client.merchant_salt_v2.as_str(),
+            vars,
+        )
+        .unwrap();
+        let client = reqwest::Client::new();
+        let req = client
+            .post(
+                Url::parse(
+                    format!("{}/merchant/postservice?form=2", self.client.base_url).as_str(),
+                )
+                .unwrap(),
+            )
+            .form(&vars)
+            .send()
+            .await;
+        return match req {
+            Ok(r) => Ok(r.json::<BinDetails>().await.unwrap()),
+            Err(e) => Err(anyhow!(e)),
+        };
     }
 }
