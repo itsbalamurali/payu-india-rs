@@ -74,7 +74,7 @@ impl Settlements {
         date: &'static str,
         utr: Option<String>,
     ) -> Result<SettlementDetails, anyhow::Error> {
-        let mut input_vars: HashMap<&str, &str> = HashMap::from([
+        let input_vars: HashMap<&str, &str> = HashMap::from([
             ("command", "get_settlement_details"),
             ("var1", date),
             ("var2", "5"),

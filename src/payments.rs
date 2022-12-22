@@ -71,12 +71,12 @@ impl Payments {
         };
     }
 
-    fn get_wallet_codes() -> HashMap<&'static str, &'static str> {
+    pub fn get_wallet_codes() -> HashMap<&'static str, &'static str> {
         let wallet_codes: HashMap<&str, &str> = HashMap::from([]);
         return wallet_codes;
     }
 
-    fn get_netbanking_codes() -> HashMap<&'static str, &'static str> {
+    pub fn get_netbanking_codes() -> HashMap<&'static str, &'static str> {
         let netbanking_codes: HashMap<&str, &str> = HashMap::from([
             ("Airtel Payments Bank", "AIRNB"),
             ("Axis NB", "AXIB"),

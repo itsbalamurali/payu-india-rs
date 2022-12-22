@@ -2,7 +2,7 @@
 name = "payu-india"
 description = "PayU India API Rust SDK."
 readme = "README.md"
-version = "0.0.1"
+version = "0.0.2"
 edition = "2021"
 license-file = "LICENSE"
 authors = ["Balamurali Pandranki"]

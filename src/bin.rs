@@ -11,7 +11,7 @@ pub struct BinInfo {
 }
 
 #[derive(Serialize, Deserialize)]
-struct Data {
+pub struct Data {
     total_count: i32,
     last: i32,
     next_start: i32,
@@ -19,7 +19,7 @@ struct Data {
 }
 
 #[derive(Serialize, Deserialize)]
-struct BinsData {
+pub struct BinsData {
     // The issuing bank of the card used for the transaction
     issuing_bank: String,
     // The BIN number of the card is displayed in the response.
@@ -72,7 +72,7 @@ impl Bin {
     }
 
     pub async fn get_bin_info(self, bin: &'static str) -> Result<BinInfo, Error> {
-        let mut input_vars: HashMap<&str, &str> = HashMap::from([
+        let input_vars: HashMap<&str, &str> = HashMap::from([
             ("command", "getBINInfo"),
             ("var1", "1"),
             ("var2", &bin),
@@ -98,7 +98,7 @@ impl Bin {
     }
 
     pub async fn check_is_domestic(self, bin: &'static str) -> Result<BinDetails, Error> {
-        let mut input_vars: HashMap<&str, &str> =
+        let input_vars: HashMap<&str, &str> =
             HashMap::from([("command", "check_isDomestic"), ("var1", bin)]);
         let vars = self.client.generate_hash(input_vars).unwrap();
 

@@ -2,17 +2,17 @@ use ring::digest::{digest, SHA512};
 use std::collections::HashMap;
 use std::str::from_utf8;
 
-mod bin;
-mod checkout;
-mod downtime;
-mod emi;
-mod invoice;
-mod offers;
-mod payments;
-mod payouts;
-mod refunds;
-mod settlements;
-mod upi;
+pub mod bin;
+pub mod checkout;
+pub mod downtime;
+pub mod emi;
+pub mod invoice;
+pub mod offers;
+pub mod payments;
+pub mod payouts;
+pub mod refunds;
+pub mod settlements;
+pub mod upi;
 
 #[derive(Debug, Copy, Clone)]
 pub struct PayuApiClient {

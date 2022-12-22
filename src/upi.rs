@@ -27,6 +27,7 @@ impl Upi {
         Self { client }
     }
 
+    //Get SI/Auto deduct Mandate supported UPI Handles
     pub fn supported_upi_handles() -> HashMap<&'static str, Vec<&'static str>> {
         let supported_upi_handles: HashMap<&str, Vec<&str>> = HashMap::from([
             ("Amazon Pay", vec!["@apl"]),
@@ -53,7 +54,7 @@ impl Upi {
     }
 
     pub async fn validate_vpa(self, vpa: &'static str) -> Result<UpiVpaDetails, Error> {
-        let mut input_vars: HashMap<&str, &str> = HashMap::from([
+        let input_vars: HashMap<&str, &str> = HashMap::from([
             ("command", "validateVPA"),
             ("var1", vpa),
             ("var2", "{\"validateAutoPayVPA\":\"1\"}"),

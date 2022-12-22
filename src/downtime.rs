@@ -70,7 +70,7 @@ impl Downtime {
         self,
         bin: &'static str,
     ) -> Result<IssuingBankStatus, Error> {
-        let mut input_vars: HashMap<&str, &str> =
+        let input_vars: HashMap<&str, &str> =
             HashMap::from([("command", "getIssuingBankStatus"), ("var1", bin)]);
         let vars = self.client.generate_hash(input_vars).unwrap();
         let client = reqwest::Client::new();
@@ -92,7 +92,7 @@ impl Downtime {
 
     //Get issuing bank card bins which are down.
     pub async fn get_issuing_bank_down_bins(self) -> Result<DownBins, Error> {
-        let mut input_vars: HashMap<&str, &str> =
+        let input_vars: HashMap<&str, &str> =
             HashMap::from([("command", "getIssuingBankDownBins"), ("var1", "default")]);
         let vars = self.client.generate_hash(input_vars).unwrap();
         let client = reqwest::Client::new();
