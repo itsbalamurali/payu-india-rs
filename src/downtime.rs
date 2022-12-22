@@ -46,8 +46,10 @@ impl Downtime {
 
     //Get the netbanking status.
     pub async fn get_netbanking_status(self) -> Result<NetBankingStatus, Error> {
-        let input_vars: HashMap<&str, &str> =
-            HashMap::from([("command", "getNetbankingStatus"), ("var1", "default")]);
+        let input_vars = HashMap::from([
+            ("command".to_string(), "getNetbankingStatus".to_string()),
+            ("var1".to_string(), "default".to_string()),
+        ]);
         let vars = self.client.generate_hash(input_vars).unwrap();
         let client = reqwest::Client::new();
         let req = client
@@ -66,12 +68,11 @@ impl Downtime {
         };
     }
     //Get card issuing bank status.
-    pub async fn get_issuing_bank_status(
-        self,
-        bin: &'static str,
-    ) -> Result<IssuingBankStatus, Error> {
-        let input_vars: HashMap<&str, &str> =
-            HashMap::from([("command", "getIssuingBankStatus"), ("var1", bin)]);
+    pub async fn get_issuing_bank_status(self, bin: i64) -> Result<IssuingBankStatus, Error> {
+        let input_vars = HashMap::from([
+            ("command".to_string(), "getIssuingBankStatus".to_string()),
+            ("var1".to_string(), bin.to_string()),
+        ]);
         let vars = self.client.generate_hash(input_vars).unwrap();
         let client = reqwest::Client::new();
         let req = client
@@ -92,8 +93,10 @@ impl Downtime {
 
     //Get issuing bank card bins which are down.
     pub async fn get_issuing_bank_down_bins(self) -> Result<DownBins, Error> {
-        let input_vars: HashMap<&str, &str> =
-            HashMap::from([("command", "getIssuingBankDownBins"), ("var1", "default")]);
+        let input_vars = HashMap::from([
+            ("command".to_string(), "getIssuingBankDownBins".to_string()),
+            ("var1".to_string(), "default".to_string()),
+        ]);
         let vars = self.client.generate_hash(input_vars).unwrap();
         let client = reqwest::Client::new();
         let req = client

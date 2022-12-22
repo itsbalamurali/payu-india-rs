@@ -24,9 +24,10 @@ impl Checkout {
         req: &CheckoutRequest,
     ) -> Result<CheckoutDetails, anyhow::Error> {
         let checkout_request = serde_json::to_string(req).unwrap();
-        let vars: HashMap<&str, &str> =
-            HashMap::from([("command", "get_checkout_details"), ("var1", &checkout_request)]);
-
+        let vars = HashMap::from([
+            ("command".to_string(), "get_checkout_details".to_string()),
+            ("var1".to_string(), checkout_request),
+        ]);
         let client = reqwest::Client::new();
         let req = client
             .post(

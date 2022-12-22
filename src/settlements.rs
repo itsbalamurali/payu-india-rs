@@ -71,16 +71,16 @@ impl Settlements {
 
     pub async fn get_settlement_details(
         self,
-        date: &'static str,
+        date: String,
         utr: Option<String>,
     ) -> Result<SettlementDetails, anyhow::Error> {
-        let input_vars: HashMap<&str, &str> = HashMap::from([
-            ("command", "get_settlement_details"),
-            ("var1", date),
-            ("var2", "5"),
-            ("var3", "10000"),
-            ("var4", "L"),
-            ("var5", "2"),
+        let input_vars = HashMap::from([
+            ("command".to_string(), "get_settlement_details".to_string()),
+            ("var1".to_string(), date.to_string()),
+            ("var2".to_string(), "5".to_string()),
+            ("var3".to_string(), "10000".to_string()),
+            ("var4".to_string(), "L".to_string()),
+            ("var5".to_string(), "2".to_string()),
         ]);
         if utr.is_some() {}
         let vars = self.client.generate_hash(input_vars).unwrap();

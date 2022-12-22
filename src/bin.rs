@@ -51,7 +51,7 @@ pub struct BinsData {
 }
 
 #[derive(Serialize, Deserialize)]
-struct BinDetails {
+pub struct BinDetails {
     #[serde(rename = "isDomestic")]
     pub is_domestic: String,
     #[serde(rename = "issuingBank")]
@@ -71,13 +71,13 @@ impl Bin {
         Self { client }
     }
 
-    pub async fn get_bin_info(self, bin: &'static str) -> Result<BinInfo, Error> {
-        let input_vars: HashMap<&str, &str> = HashMap::from([
-            ("command", "getBINInfo"),
-            ("var1", "1"),
-            ("var2", &bin),
-            ("var3", "0"),
-            ("var5", "1"),
+    pub async fn get_bin_info(self, bin: i64) -> Result<BinInfo, Error> {
+        let input_vars = HashMap::from([
+            ("command".to_string(), "getBINInfo".to_string()),
+            ("var1".to_string(), "1".to_string()),
+            ("var2".to_string(), bin.to_string()),
+            ("var3".to_string(), "0".to_string()),
+            ("var5".to_string(), "1".to_string()),
         ]);
         let vars = self.client.generate_hash(input_vars).unwrap();
         let client = reqwest::Client::new();
@@ -97,9 +97,11 @@ impl Bin {
         };
     }
 
-    pub async fn check_is_domestic(self, bin: &'static str) -> Result<BinDetails, Error> {
-        let input_vars: HashMap<&str, &str> =
-            HashMap::from([("command", "check_isDomestic"), ("var1", bin)]);
+    pub async fn check_is_domestic(self, bin: i64) -> Result<BinDetails, Error> {
+        let input_vars = HashMap::from([
+            ("command".to_string(), "check_isDomestic".to_string()),
+            ("var1".to_string(), bin.to_string()),
+        ]);
         let vars = self.client.generate_hash(input_vars).unwrap();
 
         let client = reqwest::Client::new();

@@ -54,10 +54,13 @@ impl Upi {
     }
 
     pub async fn validate_vpa(self, vpa: &'static str) -> Result<UpiVpaDetails, Error> {
-        let input_vars: HashMap<&str, &str> = HashMap::from([
-            ("command", "validateVPA"),
-            ("var1", vpa),
-            ("var2", "{\"validateAutoPayVPA\":\"1\"}"),
+        let input_vars = HashMap::from([
+            ("command".to_string(), "validateVPA".to_string()),
+            ("var1".to_string(), vpa.to_string()),
+            (
+                "var2".to_string(),
+                "{\"validateAutoPayVPA\":\"1\"}".to_string(),
+            ),
         ]);
         let vars = self.client.generate_hash(input_vars).unwrap();
         let client = reqwest::Client::new();
