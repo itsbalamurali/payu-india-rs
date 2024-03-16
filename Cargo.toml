@@ -10,7 +10,7 @@ repository = "https://github.com/itsbalamurali/payu-india-rs"
 
 [dependencies]
 reqwest = "0.11.13"
-reqwest-middleware = "0.2.0"
+reqwest-middleware = "0.2.5"
 ring = "0.17.0-alpha.11"
 anyhow = "1.0.67"
 serde = { version="1",features = ["derive"]}
